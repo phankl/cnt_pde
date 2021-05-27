@@ -1,3 +1,6 @@
+#ifndef MATH_EXTRA_header
+#define MATH_EXTRA_header
+
 #include <cmath>
 #include <algorithm>
 #include <vector>
@@ -10,3 +13,5 @@ vector<double> tridiagonalSystem(vector<vector<double>>&, vector<double>&);
 
 void print(vector<double>&);
 void print(vector<vector<double>>&);
+
+#endif
