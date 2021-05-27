@@ -31,7 +31,7 @@ class PDE {
     vector<double> nextState;
 
     vector<double> implicitEquation(vector<double>&);
-    vector<double> jacobian(vector<double>&);
+    vector<vector<double>> jacobian(vector<double>&);
 
     vector<double> newtonMethod();
 
