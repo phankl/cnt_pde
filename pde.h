@@ -26,6 +26,9 @@ class PDE {
 
     int step;
 
+    double eps;
+    double delta;
+
     vector<double> previousState;
     vector<double> currentState;
     vector<double> nextState;

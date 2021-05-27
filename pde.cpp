@@ -41,6 +41,9 @@ PDE::PDE(vector<double>& var) {
 
   step = 0;
 
+  eps = 1.0e-9;
+  delta = 1.0e-8;
+
   previousState = vector<double>(nx, 0.0);
   currentState = vector<double>(nx, 0.0);
 }
@@ -70,7 +73,7 @@ vector<double> PDE::implicitEquation (vector<double>& nextState) {
 
     s = e0*w * cos(w*(step+1));
 
-    result[i-1] = jx + jt + jtt + s;
+    result[i-1] = -jx - jt - jtt - s;
   }
 
   return result;
@@ -105,4 +108,46 @@ vector<vector<double>> PDE::jacobian(vector<double>& nextState) {
   }
   
   return result;
+}
+
+vector<double> PDE::newtonMethod() {
+  bool stop = false;
+
+  vector<double> currentIteration = vector<double>(currentState.begin()+1, currentState.end()-1);
+  vector<double> nextIteration = vector<double>(nx-2, 0.0);
+
+  while(!stop) {
+    vector<vector<double>> a = jacobian(currentIteration);
+    vector<double> b = implicitEquation(currentIteration);
+
+    vector<double> deltaIteration = tridiagonalSystem(a, b);
+    nextIteration = add(currentIteration, deltaIteration);
+
+    // check convergence
+
+    bool absolute = true;
+    bool relative = true;
+    for (int i = 0; i < nx-2; i++) {
+
+      // absolute convergence
+
+      if (fabs(deltaIteration[i]) >= eps) {
+        absolute = false;
+        break;
+      }
+
+      // relative convergence
+    
+      if (fabs(deltaIteration[i] / nextIteration[i]) > delta) {
+        relative = false;
+        break;
+      }
+    }
+    
+    currentIteration = nextIteration;
+
+    if (absolute && relative) stop = true;
+  }
+
+  return currentIteration;
 }
